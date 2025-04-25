@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Music Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Spotify Music Search</h1>
+            <p>Find the perfect song with powerful search features</p>
+        </header>
+        
+        <div class="feature-cards">
+            <div class="feature-card">
+                <div class="icon">🔍</div>
+                <h2>Text Search</h2>
+                <p>Find songs with descriptive terms</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">🎵</div>
+                <h2>Audio Recognition</h2>
+                <p>Identify songs playing around you</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">🎤</div>
+                <h2>Humming Search</h2>
+                <p>Find songs by humming the melody</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="icon">📋</div>
+                <h2>Playlist Management</h2>
+                <p>Create and manage your playlists</p>
+            </div>
+        </div>
+        
+        <div class="login-section">
+            <h3>Ready to discover new music?</h3>
+            <a href="{{ url_for('login') }}" class="spotify-button">CONNECT WITH SPOTIFY</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Humming Search - Spotify Music Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Humming Search</h1>
+            <p>Find songs by humming the melody</p>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li><a href="{{ url_for('search') }}">Text Search</a></li>
+                    <li><a href="{{ url_for('audio_recognition') }}">Audio Recognition</a></li>
+                    <li><a href="{{ url_for('playlist_management') }}">Playlist Management</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <section class="humming-search-section">
+            <div class="humming-controls">
+                <button id="startHumming" class="record-button">Start Recording</button>
+                <button id="stopHumming" class="record-button" style="display: none;">Stop Recording</button>
+                <div class="audio-visualizer">
+                    <div class="visualizer-container">
+                        <canvas id="hummingVisualizer" width="300" height="100"></canvas>
+                    </div>
+                </div>
+                <p id="hummingStatus">Press the button and hum a melody</p>
+                <p class="humming-tip">For best results, hum for at least 10 seconds</p>
+            </div>
+            
+            <div class="humming-results" id="hummingResults">
+                <h3>Matching Songs</h3>
+                <div id="loadingHummingResults" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Searching for matching songs...</p>
+                </div>
+                <div id="noHummingResults" style="display: none;">
+                    <p>No matching songs found. Please try again.</p>
+                </div>
+                <div id="hummingMatches" style="display: none;">
+                    <!-- Results will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

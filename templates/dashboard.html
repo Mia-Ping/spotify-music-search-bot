@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Spotify Music Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #121212;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .profile {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .profile img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section h2 {
+            color: #1DB954;
+            margin-bottom: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .playlist-card, .track-card {
+            background-color: #282828;
+            padding: 15px;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+        .playlist-card:hover, .track-card:hover {
+            background-color: #383838;
+        }
+        .playlist-card img, .track-card img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .playlist-card h3, .track-card h3 {
+            margin: 0;
+            font-size: 16px;
+            color: white;
+        }
+        .playlist-card p, .track-card p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #b3b3b3;
+        }
+        .no-items {
+            text-align: center;
+            color: #b3b3b3;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="dashboard-header">
+            <h1>Welcome{% if user and user.display_name %}, {{ user.display_name }}{% endif %}</h1>
+            <div class="user-profile">
+                {% if user and user.images and user.images|length > 0 %}
+                    <img src="{{ user.images[0].url }}" alt="Profile Picture" class="profile-pic">
+                {% endif %}
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ url_for('search') }}">Search</a></li>
+                    <li><a href="{{ url_for('audio_recognition') }}">Audio Recognition</a></li>
+                    <li><a href="{{ url_for('humming_search') }}">Humming Search</a></li>
+                    <li><a href="{{ url_for('playlist_management') }}">Playlist Management</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <section class="dashboard-content">
+            <div class="dashboard-section">
+                <h2>Your Playlists</h2>
+                {% if playlists and playlists.get('items') %}
+                    <div class="grid">
+                        {% for playlist in playlists['items'] %}
+                            <div class="playlist-card">
+                                {% if playlist.get('images') and playlist['images']|length > 0 %}
+                                    <img src="{{ playlist['images'][0]['url'] }}" alt="Playlist Cover">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/300" alt="No Cover">
+                                {% endif %}
+                                <h3>{{ playlist.get('name', 'Untitled Playlist') }}</h3>
+                                <p>{{ playlist.get('tracks', {}).get('total', 0) }} tracks</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="no-items">No playlists found</div>
+                {% endif %}
+            </div>
+            
+            <div class="dashboard-section">
+                <h2>Recently Played</h2>
+                {% if recent_tracks and recent_tracks.get('items') %}
+                    <div class="grid">
+                        {% for item in recent_tracks['items'] %}
+                            {% set track = item.get('track', {}) %}
+                            <div class="track-card">
+                                {% if track.get('album', {}).get('images') and track['album']['images']|length > 0 %}
+                                    <img src="{{ track['album']['images'][0]['url'] }}" alt="Album Cover">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/300" alt="No Cover">
+                                {% endif %}
+                                <h3>{{ track.get('name', 'Unknown Track') }}</h3>
+                                <p>{{ track.get('artists', [{}])[0].get('name', 'Unknown Artist') }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="no-items">No recent tracks found</div>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+</body>
+</html>

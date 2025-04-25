@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - Spotify Music Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Search Results</h1>
+            <p>Results for: "{{ query }}"</p>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li><a href="{{ url_for('search') }}">New Search</a></li>
+                    <li><a href="{{ url_for('audio_recognition') }}">Audio Recognition</a></li>
+                    <li><a href="{{ url_for('humming_search') }}">Humming Search</a></li>
+                    <li><a href="{{ url_for('playlist_management') }}">Playlist Management</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section class="search-results">
+            {% if results %}
+                {% if results.tracks %}
+                    <div class="results-section">
+                        <h2>Tracks</h2>
+                        <div class="results-grid">
+                            {% for item in results.tracks.items %}
+                                <div class="result-card">
+                                    {% if item.album.images %}
+                                        <img src="{{ item.album.images[0].url }}" alt="{{ item.name }}">
+                                    {% endif %}
+                                    <div class="result-info">
+                                        <h3>{{ item.name }}</h3>
+                                        <p>{{ item.artists[0].name }}</p>
+                                        <p class="album-name">{{ item.album.name }}</p>
+                                        <div class="result-actions">
+                                            <button class="action-button play-button" onclick="window.open('{{ item.external_urls.spotify }}', '_blank')">Play on Spotify</button>
+                                            <button class="action-button add-button">Add to Playlist</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if results.artists %}
+                    <div class="results-section">
+                        <h2>Artists</h2>
+                        <div class="results-grid">
+                            {% for item in results.artists.items %}
+                                <div class="result-card">
+                                    {% if item.images %}
+                                        <img src="{{ item.images[0].url }}" alt="{{ item.name }}">
+                                    {% endif %}
+                                    <div class="result-info">
+                                        <h3>{{ item.name }}</h3>
+                                        <p>Followers: {{ item.followers.total }}</p>
+                                        <div class="result-actions">
+                                            <button class="action-button" onclick="window.open('{{ item.external_urls.spotify }}', '_blank')">View on Spotify</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if results.albums %}
+                    <div class="results-section">
+                        <h2>Albums</h2>
+                        <div class="results-grid">
+                            {% for item in results.albums.items %}
+                                <div class="result-card">
+                                    {% if item.images %}
+                                        <img src="{{ item.images[0].url }}" alt="{{ item.name }}">
+                                    {% endif %}
+                                    <div class="result-info">
+                                        <h3>{{ item.name }}</h3>
+                                        <p>{{ item.artists[0].name }}</p>
+                                        <div class="result-actions">
+                                            <button class="action-button" onclick="window.open('{{ item.external_urls.spotify }}', '_blank')">View on Spotify</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if results.playlists %}
+                    <div class="results-section">
+                        <h2>Playlists</h2>
+                        <div class="results-grid">
+                            {% for item in results.playlists.items %}
+                                <div class="result-card">
+                                    {% if item.images %}
+                                        <img src="{{ item.images[0].url }}" alt="{{ item.name }}">
+                                    {% endif %}
+                                    <div class="result-info">
+                                        <h3>{{ item.name }}</h3>
+                                        <p>By {{ item.owner.display_name }}</p>
+                                        <div class="result-actions">
+                                            <button class="action-button" onclick="window.open('{{ item.external_urls.spotify }}', '_blank')">View on Spotify</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="no-results">
+                    <p>No results found for your search.</p>
+                    <a href="{{ url_for('search') }}" class="back-button">Try Another Search</a>
+                </div>
+            {% endif %}
+        </section>
+    </div>
+
+    <style>
+        .search-results {
+            padding: 2rem 0;
+        }
+        
+        .results-section {
+            margin-bottom: 3rem;
+        }
+        
+        .results-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .result-card {
+            background: var(--card-background);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .result-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .result-info {
+            padding: 1.5rem;
+        }
+        
+        .result-info h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+            color: var(--text-color);
+        }
+        
+        .result-info p {
+            margin: 0.3rem 0;
+            color: #b3b3b3;
+        }
+        
+        .result-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .action-button {
+            padding: 0.8rem 1.2rem;
+            border: none;
+            border-radius: 50px;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .action-button:hover {
+            background: var(--hover-color);
+            transform: translateY(-2px);
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+        }
+        
+        .back-button {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 1rem 2rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: var(--hover-color);
+            transform: translateY(-2px);
+        }
+    </style>
+</body>
+</html> 

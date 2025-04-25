@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Humming Search - Spotify Music Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Humming Search</h1>
+            <p>Find songs by humming the melody</p>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li><a href="{{ url_for('search') }}">Text Search</a></li>
+                    <li><a href="{{ url_for('audio_recognition') }}">Audio Recognition</a></li>
+                    <li><a href="{{ url_for('playlist_management') }}">Playlist Management</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <section class="humming-search-section">
+            <div class="humming-controls">
+                <button id="startHumming" class="record-button">Start Recording</button>
+                <button id="stopHumming" class="record-button stop" style="display: none;">Stop Recording</button>
+                <div class="audio-visualizer">
+                    <div class="visualizer-container">
+                        <canvas id="hummingVisualizer" width="600" height="200"></canvas>
+                    </div>
+                </div>
+                <p id="hummingStatus" class="status-text">Press the button and hum a melody</p>
+                <p class="humming-tip">For best results, hum for at least 10 seconds</p>
+            </div>
+            
+            <div class="humming-results" id="hummingResults">
+                <h3>Matching Songs</h3>
+                <div id="loadingHummingResults" class="result-state" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Searching for matching songs...</p>
+                </div>
+                <div id="noHummingResults" class="result-state" style="display: none;">
+                    <div class="no-result-icon">🎵</div>
+                    <p>No matching songs found. Please try again.</p>
+                </div>
+                <div id="hummingMatches" class="matches-grid" style="display: none;">
+                    <!-- Results will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <style>
+        .humming-search-section {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .humming-controls {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .record-button {
+            padding: 1.5rem 3rem;
+            font-size: 1.5rem;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+            box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
+        }
+
+        .record-button.stop {
+            background: #e74c3c;
+        }
+
+        .record-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
+        }
+
+        .record-button.stop:hover {
+            background: #c0392b;
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        .audio-visualizer {
+            margin: 2rem 0;
+        }
+
+        .visualizer-container {
+            background: var(--card-background);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        #hummingVisualizer {
+            width: 100%;
+            height: 200px;
+            background: transparent;
+        }
+
+        .status-text {
+            font-size: 1.2rem;
+            color: #b3b3b3;
+            margin: 1rem 0;
+        }
+
+        .humming-tip {
+            font-size: 1rem;
+            color: var(--primary-color);
+            margin-top: 1rem;
+        }
+
+        .humming-results {
+            background: var(--card-background);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .humming-results h3 {
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .result-state {
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--card-background);
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        .no-result-icon {
+            font-size: 4rem;
+            margin: 2rem 0;
+            opacity: 0.5;
+        }
+
+        .matches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .song-match {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .song-match:hover {
+            transform: translateY(-5px);
+        }
+
+        .song-match img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .song-match-info {
+            padding: 1.5rem;
+        }
+
+        .song-match-info h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .song-match-info p {
+            margin: 0.3rem 0;
+            color: #b3b3b3;
+        }
+
+        .play-match,
+        .add-match {
+            padding: 0.8rem 1.5rem;
+            margin: 0.5rem;
+            border: none;
+            border-radius: 50px;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .play-match:hover,
+        .add-match:hover {
+            background: var(--hover-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .matches-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .record-button {
+                width: 100%;
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html> 

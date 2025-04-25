@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Search - Spotify Music Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Text Search</h1>
+            <p>Find songs with descriptive terms</p>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li><a href="{{ url_for('audio_recognition') }}">Audio Recognition</a></li>
+                    <li><a href="{{ url_for('humming_search') }}">Humming Search</a></li>
+                    <li><a href="{{ url_for('playlist_management') }}">Playlist Management</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <section class="search-section">
+            <form method="POST" action="{{ url_for('search') }}" class="search-form">
+                <div class="search-input-group">
+                    <input type="text" name="query" placeholder="Enter descriptive terms (e.g., 'upbeat female vocals', 'relaxing jazz')" required>
+                    <select name="type">
+                        <option value="track">Tracks</option>
+                        <option value="artist">Artists</option>
+                        <option value="album">Albums</option>
+                        <option value="playlist">Playlists</option>
+                    </select>
+                </div>
+                <button type="submit" class="search-button">Search</button>
+            </form>
+            
+            <div class="search-tips">
+                <h3>Search Tips:</h3>
+                <ul>
+                    <li>Use descriptive terms like "upbeat female vocals" or "relaxing jazz"</li>
+                    <li>Include genres, moods, or instruments</li>
+                    <li>Try specific decades or time periods</li>
+                    <li>Combine terms for more specific results</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
